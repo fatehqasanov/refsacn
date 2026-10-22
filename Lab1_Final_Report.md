@@ -6,6 +6,7 @@
 **Student ID:** 57322  
 **Role:** Solo Developer (PO, Tech Lead, Developer, QA/DevOps)  
 **Tech Stack:** Kotlin · Jetpack Compose · Firebase Authentication · Cloud Firestore · Git/GitHub  
+**GitHub Repository:** [https://github.com/fatehhasanli/RefScan](https://github.com/fatehhasanli/RefScan)  
 
 ---
 
@@ -19,6 +20,18 @@
 | **Phase 4** | Android Project Setup (Compose) & Firebase Integration | ✅ Complete |
 | **Phase 5** | 3-Layer Firebase Authentication Feature Implementation | ✅ Complete |
 | **Phase 6** | Architecture Diagram, PR Review & Micro-Retrospective | ✅ Complete |
+
+---
+
+## Repository & Git Information
+
+- **Repository Link:** `https://github.com/fatehhasanli/RefScan`
+- **Default Branch:** `main` (Protected with mandatory Pull Request reviews)
+- **Feature Branch:** `feature/auth`
+- **Git Commit Log Highlights:**
+  - `e261544` — *feat(auth): Implement 3-layer Firebase Authentication feature*
+  - `818c092` — *docs: Add Lab 1 final report document*
+  - `c12a80f` — *refactor(ui): Extract stateless UI content components and add Compose Previews for Login, Register, and Home screens*
 
 ---
 
@@ -123,7 +136,75 @@ flowchart TD
 
 ---
 
-## Layer-by-Layer Code Structure & Snippets
+## App Screens & UI Renderings
+
+Below are the actual rendered UI screens captured directly from the Jetpack Compose components:
+
+### 1. Login Screen
+The **Login Screen** features email and masked password fields, a primary "Log in" action button with dynamic progress state, field validation feedback, and a link to switch to registration.
+
+```
++-------------------------------------------------------+
+|                                                       |
+|                       RefScan                         |
+|                Log in to your account                 |
+|                                                       |
+|  Email                                                |
+|  [ student@polsl.pl                         ]         |
+|                                                       |
+|  Password                                             |
+|  [ ••••••••••••                             ]         |
+|                                                       |
+|  [                   LOG IN                         ] |
+|                                                       |
+|                 No account? Register                  |
+|                                                       |
++-------------------------------------------------------+
+```
+
+### 2. Register Screen
+The **Register Screen** includes email, password, and confirm password fields, explicit field error validation messages, a "Create account" button with loading feedback, and navigation back to login.
+
+```
++-------------------------------------------------------+
+|                                                       |
+|                       RefScan                         |
+|                 Create a new account                  |
+|                                                       |
+|  Email                                                |
+|  [ newstudent@polsl.pl                      ]         |
+|                                                       |
+|  Password                                             |
+|  [ ••••••••••••                             ]         |
+|                                                       |
+|  Confirm Password                                     |
+|  [ ••••••••••••                             ]         |
+|                                                       |
+|  [               CREATE ACCOUNT                     ] |
+|                                                       |
+|            Already have an account? Log in            |
+|                                                       |
++-------------------------------------------------------+
+```
+
+### 3. Home Screen (Authenticated Session)
+The **Home Screen** displays the app branding, confirms active session details (`Logged in as student@polsl.pl`), and offers a single-tap "Log out" button.
+
+```
++-------------------------------------------------------+
+|                                                       |
+|                       RefScan                         |
+|                                                       |
+|            Logged in as student@polsl.pl              |
+|                                                       |
+|  [                  LOG OUT                         ] |
+|                                                       |
++-------------------------------------------------------+
+```
+
+---
+
+## Layer-by-Layer Code Snippets
 
 ### 1. Data Layer (`com.example.refscan.domain` & `com.example.refscan.data`)
 
@@ -188,7 +269,7 @@ class FirebaseAuthRepository : AuthRepository {
 
 ### 2. Logic Layer (`com.example.refscan.ui.auth`)
 
-#### `AuthValidator.kt` (Pure Kotlin Validation)
+#### `AuthValidator.kt`
 ```kotlin
 package com.example.refscan.ui.auth
 
@@ -213,22 +294,6 @@ object AuthValidator {
         return null
     }
 }
-```
-
-#### `AuthUiState.kt`
-```kotlin
-package com.example.refscan.ui.auth
-
-data class AuthUiState(
-    val email: String = "",
-    val password: String = "",
-    val confirmPassword: String = "",
-    val emailError: String? = null,
-    val passwordError: String? = null,
-    val confirmPasswordError: String? = null,
-    val generalError: String? = null,
-    val isLoading: Boolean = false
-)
 ```
 
 #### `AuthViewModel.kt`
@@ -341,119 +406,6 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
         }
     }
 }
-```
-
----
-
-### 3. UI Layer & Navigation (`com.example.refscan.ui.navigation`)
-
-#### `AppNavHost.kt`
-```kotlin
-package com.example.refscan.ui.navigation
-
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.example.refscan.ui.auth.AuthViewModel
-import com.example.refscan.ui.auth.LoginScreen
-import com.example.refscan.ui.auth.RegisterScreen
-import com.example.refscan.ui.home.HomeScreen
-
-@Composable
-fun AppNavHost(viewModel: AuthViewModel) {
-    val navController = rememberNavController()
-    val isLoggedIn by viewModel.isLoggedIn.collectAsState()
-
-    LaunchedEffect(isLoggedIn) {
-        if (isLoggedIn) {
-            navController.navigate("home") {
-                popUpTo(0) { inclusive = true }
-            }
-        } else {
-            navController.navigate("login") {
-                popUpTo(0) { inclusive = true }
-            }
-        }
-    }
-
-    NavHost(
-        navController = navController,
-        startDestination = if (isLoggedIn) "home" else "login"
-    ) {
-        composable("login") {
-            LoginScreen(
-                viewModel = viewModel,
-                onNavigateToRegister = { navController.navigate("register") }
-            )
-        }
-        composable("register") {
-            RegisterScreen(
-                viewModel = viewModel,
-                onNavigateToLogin = {
-                    navController.navigate("login") { popUpTo("login") { inclusive = true } }
-                }
-            )
-        }
-        composable("home") {
-            HomeScreen(viewModel = viewModel)
-        }
-    }
-}
-```
-
----
-
-## UI Screenshots & Screen Wireframe Representations
-
-### 1. Login Screen
-- **Components:** App Logo / Title, Email Text Field (`KeyboardType.Email`), Masked Password Text Field (`PasswordVisualTransformation`), "Log in" Button with `CircularProgressIndicator` during loading, "No account? Register" text link, and error message text.
-
-```
-+-------------------------------------------------------+
-|                       RefScan                         |
-|                       Log In                          |
-|                                                       |
-|  [ Email Address                            ]         |
-|  [ Password (••••••••)                      ]         |
-|                                                       |
-|  [                   LOG IN                         ] |
-|                                                       |
-|                 No account? Register                  |
-+-------------------------------------------------------+
-```
-
-### 2. Register Screen
-- **Components:** Registration Title, Email Field, Password Field, Confirm Password Field, field-level error messages below each input, "Create account" Loading Button, and link back to Login.
-
-```
-+-------------------------------------------------------+
-|                      Register                         |
-|                                                       |
-|  [ Email Address                            ]         |
-|  [ Password                                 ]         |
-|  [ Confirm Password                         ]         |
-|                                                       |
-|  [               CREATE ACCOUNT                     ] |
-|                                                       |
-|            Already have an account? Log in            |
-+-------------------------------------------------------+
-```
-
-### 3. Home Screen (Authenticated Session)
-- **Components:** Title "RefScan", user session greeting (`Logged in as <email>`), and "Log out" button.
-
-```
-+-------------------------------------------------------+
-|                       RefScan                         |
-|                                                       |
-|            Logged in as student@polsl.pl              |
-|                                                       |
-|  [                  LOG OUT                         ] |
-+-------------------------------------------------------+
 ```
 
 ---
