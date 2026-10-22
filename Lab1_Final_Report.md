@@ -7,7 +7,7 @@
 **Account Email:** fatehqasanov@gmail.com  
 **Role:** Solo Developer (PO, Tech Lead, Developer, QA/DevOps)  
 **Tech Stack:** Kotlin · Jetpack Compose · Firebase Authentication · Cloud Firestore · Git/GitHub  
-**GitHub Repository:** [https://github.com/fatehhasanli/RefScan](https://github.com/fatehhasanli/RefScan)  
+**GitHub Repository:** [https://github.com/fatehqasanov/refsacn](https://github.com/fatehqasanov/refsacn)  
 
 ---
 
@@ -26,7 +26,7 @@
 
 ## Repository & Git Information
 
-- **Repository Link:** `https://github.com/fatehhasanli/RefScan`
+- **Repository Link:** `https://github.com/fatehqasanov/refsacn`
 - **Default Branch:** `main` (Protected with mandatory Pull Request reviews)
 - **Feature Branch:** `feature/auth`
 - **Git Commit Log Highlights:**
