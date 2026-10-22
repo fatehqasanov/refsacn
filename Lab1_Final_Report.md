@@ -4,6 +4,7 @@
 **App Name:** RefScan  
 **Student Name:** Fateh Hasanlı  
 **Student ID:** 57322  
+**Account Email:** fatehqasanov@gmail.com  
 **Role:** Solo Developer (PO, Tech Lead, Developer, QA/DevOps)  
 **Tech Stack:** Kotlin · Jetpack Compose · Firebase Authentication · Cloud Firestore · Git/GitHub  
 **GitHub Repository:** [https://github.com/fatehhasanli/RefScan](https://github.com/fatehhasanli/RefScan)  
@@ -31,13 +32,14 @@
 - **Git Commit Log Highlights:**
   - `e261544` — *feat(auth): Implement 3-layer Firebase Authentication feature*
   - `818c092` — *docs: Add Lab 1 final report document*
-  - `c12a80f` — *refactor(ui): Extract stateless UI content components and add Compose Previews for Login, Register, and Home screens*
+  - `6a605fd` — *refactor(ui): Extract stateless UI content components and update report with rendered screen layouts*
+  - Updated Previews & Reports to reflect official account `fatehqasanov@gmail.com` and Game Artist / Level Designer domain model.
 
 ---
 
 ## Phase 1 — Team & Roles
 
-Since this is a solo-developer project, all responsibilities across product, architecture, implementation, and quality assurance are managed individually:
+Since this is a solo-developer project, all responsibilities across product, architecture, implementation, and quality assurance are managed individually by **Fateh Hasanlı (ID: 57322, Email: fatehqasanov@gmail.com)**:
 
 | Role | Responsibility | Assigned Person |
 | :--- | :--- | :--- |
@@ -50,37 +52,40 @@ Since this is a solo-developer project, all responsibilities across product, arc
 
 ## Phase 2 — Product Definition & Cloud Data Model
 
-### 1. Problem Statement
-> *"Game artists and level designers walking outside or traveling cannot use desktop task managers to instantly capture, tag, and organize real-world material textures and color references for their active game projects."*
+### 1. Target Audience & Problem Statement
+- **Target User:** Game artists and level designers walking outside or traveling.
+- **Problem Statement:**
+  > *"Game artists and level designers walking outside or traveling cannot use desktop task managers to instantly capture, tag, and organize real-world material textures and color references for their active game projects."*
+- **Why a Mobile App?** RefScan leverages smartphone portability to log real-world reference observations, material surface tags, and color palettes on location.
 
 ### 2. MVP Features & Sprint Breakdown
-- **User Authentication (Sprint 1 - Complete):** Register, Log In, Log Out, and Auto-Login session persistence using Firebase Authentication.
-- **Project List Screen (Sprint 1):** View and manage active game projects or environmental levels.
-- **Reference Detail & Edit Screen (Sprint 1):** View, add, and update real-world notes, material tags, and color hex codes linked to a project.
-- **Camera & Cloud Storage Upload (Sprint 3 / Later):** Capture direct photo references using the phone camera and sync to Firebase Cloud Storage.
+- **User Authentication (Sprint 1 - Complete):** Register, Log In, Log Out, and Auto-Login session persistence using Firebase Authentication (`fatehqasanov@gmail.com`).
+- **Project List Screen (Sprint 1):** View and manage active game environment levels or project titles.
+- **Reference Detail & Edit Screen (Sprint 1):** View, add, and update material notes, surface tags, and color hex codes linked to a project.
+- **Camera & Cloud Storage Upload (Sprint 3 / Later):** Capture direct texture photo references using the phone camera and sync to Firebase Cloud Storage.
 
 ### 3. Cloud Firestore Data Model (Max 3 Collections)
 
 ```
 [users] (Collection)
  └── uid (Doc ID - String matching Firebase Auth UID)
-      ├── email: String
+      ├── email: String (e.g. fatehqasanov@gmail.com)
       ├── displayName: String
       └── createdAt: Timestamp
 
 [projects] (Collection)
  └── projectId (Doc ID - String)
       ├── ownerId: String (foreign key -> users.uid)
-      ├── title: String
-      ├── engine: String
+      ├── title: String (e.g. "Cyberpunk Alley Level")
+      ├── engine: String (e.g. "Unreal Engine 5")
       └── createdAt: Timestamp
 
 [references] (Collection)
  └── referenceId (Doc ID - String)
       ├── projectId: String (foreign key -> projects.projectId)
       ├── ownerId: String (foreign key -> users.uid)
-      ├── note: String
-      ├── colorHex: String
+      ├── note: String (e.g. "Wet asphalt roughness & puddle reflection")
+      ├── colorHex: String (e.g. "#1A2B3C")
       └── createdAt: Timestamp
 ```
 
@@ -88,9 +93,11 @@ Since this is a solo-developer project, all responsibilities across product, arc
 
 ## Phase 3 — Repository Architecture & Workflow Setup
 
-### 1. GitHub Board Columns & Workflow
+### 1. GitHub Board Columns & User Story Format
 - **Columns:** `Backlog` | `Sprint 1` | `In Progress` | `In Review` | `Done`
-- **Automation:** Issues automatically move to `Done` upon merging linked Pull Requests.
+- **User Story Example:**
+  - **Title:** *As a game artist, I want to log in with my email and password*
+  - **Body:** *As a game artist/designer, I want to log in with my account (`fatehqasanov@gmail.com`), so that I can access my saved material texture references.*
 
 ### 2. Branch Protection Rules
 - Branch protection enabled for `main`.
@@ -141,7 +148,7 @@ flowchart TD
 Below are the actual rendered UI screens captured directly from the Jetpack Compose components:
 
 ### 1. Login Screen
-The **Login Screen** features email and masked password fields, a primary "Log in" action button with dynamic progress state, field validation feedback, and a link to switch to registration.
+The **Login Screen** features email (`fatehqasanov@gmail.com`) and masked password fields, a primary "Log in" action button with dynamic progress state, field validation feedback, and a link to switch to registration.
 
 ```
 +-------------------------------------------------------+
@@ -150,7 +157,7 @@ The **Login Screen** features email and masked password fields, a primary "Log i
 |                Log in to your account                 |
 |                                                       |
 |  Email                                                |
-|  [ student@polsl.pl                         ]         |
+|  [ fatehqasanov@gmail.com                   ]         |
 |                                                       |
 |  Password                                             |
 |  [ ••••••••••••                             ]         |
@@ -172,7 +179,7 @@ The **Register Screen** includes email, password, and confirm password fields, e
 |                 Create a new account                  |
 |                                                       |
 |  Email                                                |
-|  [ newstudent@polsl.pl                      ]         |
+|  [ fatehqasanov@gmail.com                   ]         |
 |                                                       |
 |  Password                                             |
 |  [ ••••••••••••                             ]         |
@@ -188,14 +195,14 @@ The **Register Screen** includes email, password, and confirm password fields, e
 ```
 
 ### 3. Home Screen (Authenticated Session)
-The **Home Screen** displays the app branding, confirms active session details (`Logged in as student@polsl.pl`), and offers a single-tap "Log out" button.
+The **Home Screen** displays the app branding, confirms active session details (`Logged in as fatehqasanov@gmail.com`), and offers a single-tap "Log out" button.
 
 ```
 +-------------------------------------------------------+
 |                                                       |
 |                       RefScan                         |
 |                                                       |
-|            Logged in as student@polsl.pl              |
+|         Logged in as fatehqasanov@gmail.com           |
 |                                                       |
 |  [                  LOG OUT                         ] |
 |                                                       |
@@ -427,4 +434,4 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
 3. Enhance UI styling with Material 3 design tokens and dynamic color schemes.
 
 ---
-*Report generated and formatted for Lab 1 submission • RefScan Android App • Student ID: 57322*
+*Report generated and formatted for Lab 1 submission • RefScan Android App • Student ID: 57322 • Account: fatehqasanov@gmail.com*

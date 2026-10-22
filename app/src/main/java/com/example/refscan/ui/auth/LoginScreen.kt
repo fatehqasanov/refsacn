@@ -129,7 +129,7 @@ fun LoginScreenContent(
 fun LoginScreenPreview() {
     MaterialTheme {
         LoginScreenContent(
-            uiState = AuthUiState(email = "student@polsl.pl"),
+            uiState = AuthUiState(email = "fatehqasanov@gmail.com"),
             onEmailChanged = {},
             onPasswordChanged = {},
             onLoginClicked = {},

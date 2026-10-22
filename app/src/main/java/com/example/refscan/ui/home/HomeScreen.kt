@@ -60,7 +60,7 @@ fun HomeScreenContent(
 fun HomeScreenPreview() {
     MaterialTheme {
         HomeScreenContent(
-            userEmail = "student@polsl.pl",
+            userEmail = "fatehqasanov@gmail.com",
             onLogoutClicked = {}
         )
     }

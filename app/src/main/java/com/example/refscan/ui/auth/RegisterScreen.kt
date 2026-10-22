@@ -147,7 +147,7 @@ fun RegisterScreenPreview() {
     MaterialTheme {
         RegisterScreenContent(
             uiState = AuthUiState(
-                email = "newstudent@polsl.pl",
+                email = "fatehqasanov@gmail.com",
                 emailError = null,
                 passwordError = null
             ),
