@@ -2,7 +2,7 @@ import os
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Preformatted, HRFlowable
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Preformatted, HRFlowable, Image as RLImage
 
 pdf_path = r"C:\Users\fateh\AndroidStudioProjects\RefScan\Lab1_Final_Report.pdf"
 
@@ -29,17 +29,17 @@ h2_style = ParagraphStyle(
     fontSize=13,
     leading=16,
     textColor=colors.HexColor('#4338CA'),
-    spaceBefore=12,
+    spaceBefore=14,
     spaceAfter=6
 )
 
 h3_style = ParagraphStyle(
     'H3',
     parent=styles['Heading3'],
-    fontSize=10,
-    leading=13,
+    fontSize=10.5,
+    leading=14,
     textColor=colors.HexColor('#1F2937'),
-    spaceBefore=8,
+    spaceBefore=10,
     spaceAfter=4
 )
 
@@ -243,23 +243,37 @@ class FirebaseAuthRepository : AuthRepository {
 }'''
 story.append(Preformatted(firebase_repo_code, code_style))
 
-# UI Wireframes
-add_p('3. Screen Wireframe Renderings &amp; Layouts', h3_style)
-wireframe_text = '''+-------------------------------------------------------+
-|                       RefScan                         |
-|                Log in to your account                 |
-|                                                       |
-|  Email                                                |
-|  [ fatehqasanov@gmail.com                   ]         |
-|                                                       |
-|  Password                                             |
-|  [ ••••••••••••                             ]         |
-|                                                       |
-|  [                   LOG IN                         ] |
-|                                                       |
-|                 No account? Register                  |
-+-------------------------------------------------------+'''
-story.append(Preformatted(wireframe_text, code_style))
+# UI Screenshots Section
+add_p('3. In-App Screenshots (Compose UI Rendering)', h2_style)
+add_p('The following screenshots show the actual application screens rendered directly from the Jetpack Compose components:', body_style)
+
+img_login = r"C:\Users\fateh\AndroidStudioProjects\RefScan\login_screenshot.png"
+img_reg = r"C:\Users\fateh\AndroidStudioProjects\RefScan\register_screenshot.png"
+img_home = r"C:\Users\fateh\AndroidStudioProjects\RefScan\home_screenshot.png"
+
+# Side by side screenshot images table (Width: 150pt, Height: 316pt each)
+screenshot_table_data = [
+    [
+        Paragraph('<b>Figure 1: Login Screen</b>', body_style),
+        Paragraph('<b>Figure 2: Register Screen</b>', body_style),
+        Paragraph('<b>Figure 3: Home Screen</b>', body_style)
+    ],
+    [
+        RLImage(img_login, width=150, height=316),
+        RLImage(img_reg, width=150, height=316),
+        RLImage(img_home, width=150, height=316)
+    ]
+]
+
+st = Table(screenshot_table_data, colWidths=[165, 165, 165])
+st.setStyle(TableStyle([
+    ('ALIGN', (0,0), (-1,-1), 'CENTER'),
+    ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+    ('BOTTOMPADDING', (0,0), (-1,0), 4),
+    ('TOPPADDING', (0,1), (-1,1), 4),
+]))
+story.append(st)
+story.append(Spacer(1, 12))
 
 # Phase 6
 add_p('Phase 6 — Micro-Retrospective ("Retro – Lab 1")', h2_style)
@@ -268,4 +282,4 @@ add_p('• <b>What Went Well:</b> The 3-layer architecture cleanly decoupled pur
       '• <b>Action Items for Lab 2:</b> Integrate Cloud Firestore SDK to persist user profile details upon registration, write unit tests for <code>AuthValidator</code>, and enhance Material 3 UI styling.', body_style)
 
 doc.build(story)
-print('PDF generated successfully at:', pdf_path)
+print('PDF generated with EMBEDDED PNG SCREENSHOTS successfully at:', pdf_path)
