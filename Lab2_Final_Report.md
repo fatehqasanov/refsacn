@@ -1,64 +1,65 @@
-# Lab 2 Final Report: Cloud Data CRUD & Server-Side Access Control
+# Lab 2 Final Technical & Implementation Report: Cloud Data CRUD & Server-Side Access Control
 
 **Course:** Mobile Application in the Cloud — Lab 2  
 **App Name:** RefScan  
-**Team Members & Workload Distribution:**  
-1. **Fateh Hasanlı** (Student ID: 57322 | Email: `fatehqasanov@gmail.com`) — **60% Workload** (Tech Lead, Data Layer, Auth & Form Logic)  
-2. **Ibrokhimov Odiljon** (Student ID: 52857 | Email: `52857@student.polsl.pl`) — **40% Workload** (QA/DevOps, List UI, Security Rules & Extensions)  
-
-**Tech Stack:** Kotlin · Jetpack Compose · Firebase Authentication · Cloud Firestore (EU Region) · Git/GitHub  
-**GitHub Repository:** [https://github.com/fatehqasanov/refsacn](https://github.com/fatehqasanov/refsacn)  
-**Git Tag:** `lab2`  
+**Tech Stack:** Kotlin · Jetpack Compose · Firebase Authentication · Cloud Firestore · Git/GitHub  
+**GitHub Repository:** [https://github.com/fatehqasanov/refsacn](https://github.com/fatehqasanov/refsacn) | **Git Tag:** `lab2`  
 
 ---
 
-## Requirements Checklist (R1 – R10)
+## 1. Team Members & Division of Responsibilities
 
-| Requirement | Description | Status |
-| :--- | :--- | :---: |
-| **R1** | Sprint planning on board, Retro issue closed, DoD in README | ✅ **DONE** |
-| **R2** | Cloud database (Firestore EU), main + reference collection (3+ records) | ✅ **DONE** |
-| **R3** | Data model with `ownerId`, server timestamps, $\ge 4$ domain fields | ✅ **DONE** |
-| **R4** | 3-Layer architecture (Repository interface, ViewModel, pure Validator) | ✅ **DONE** |
-| **R5** | Live list query filtered by `ownerId`, loading & error states, logout | ✅ **DONE** |
-| **R6** | Create/Edit form, reference picker, 3+ validation rules, cross-field rule | ✅ **DONE** |
-| **R7** | Delete with confirmation dialog naming item being deleted | ✅ **DONE** |
-| **R8** | Server-side Security Rules in `firestore.rules` with 8 tested scenarios | ✅ **DONE** |
-| **R9** | Implemented 4 Extensions (E1 Search, E3 Empty states, E5 Status toggle, E7 Stats) | ✅ **DONE** |
-| **R10** | Team process, commits/PRs from BOTH Fateh & Odiljon, tag `lab2` | ✅ **DONE** |
+This project was developed collaboratively by a team of two students:
+
+- **Fateh Hasanlı** (Student ID: 57322 | Email: `fatehqasanov@gmail.com`) — **Product Owner & Tech Lead**
+  - Architecture & Data Layer setup (`ReferenceRepository`, `FirebaseReferenceRepository`).
+  - Firebase Authentication & Form ViewModels (`AuthViewModel`, `ReferenceEditViewModel`).
+  - Domain models (`Reference`, `Project`) & pure Kotlin validation rules (`ReferenceValidator`).
+- **Ibrokhimov Odiljon** (Student ID: 52857 | Email: `52857@student.polsl.pl`) — **QA / DevOps & Developer**
+  - Live Reference List UI (`ReferenceListScreen` and item cards).
+  - Server-side Security Rules (`firestore.rules`) and scenario testing.
+  - Implemented extensions (E1 Search, E3 Empty States, E5 Status Filter, E7 Statistics Header).
+  - GitHub Board management, PR reviews, and release tag `lab2`.
 
 ---
 
-## Tech Stack & Definition of Done
+## 2. Application Context & Domain Problem
 
-### Tech Stack Table
-- **App Framework:** Kotlin + Jetpack Compose
-- **Backend & Auth:** Firebase Authentication
-- **Cloud Database:** Cloud Firestore (EU Region - `europe-west1`)
-- **Security:** Firestore Security Rules (`firestore.rules`)
-- **Testing Frameworks:** JUnit 4, Kotlin Coroutines Test Framework
+> *"Game artists and level designers walking outside or traveling cannot use desktop task managers to instantly capture, tag, and organize real-world material textures and color references for their active game projects."*
+
+**Why RefScan Fits Mobile Better Than Desktop:** Desktop task management tools (such as Jira or Trello) are designed for sprint planning at an office desk. RefScan relies on smartphone portability so environment artists can record surface material roughness, color hex codes, and texture notes immediately while observing physical real-world locations.
+
+---
+
+## 3. Technical Stack & Definition of Done
+
+### Technical Configuration
+- **App Framework:** Kotlin + Jetpack Compose (Modern declarative UI)
+- **Authentication:** Firebase Authentication (Email & Password session management)
+- **Cloud Database:** Cloud Firestore (EU Region: `europe-west1`)
+- **Backend Security:** Firestore Security Rules (`firestore.rules`)
+- **Testing Utilities:** JUnit 4 and Kotlin Coroutines Test framework
 
 ### Definition of Done (DoD)
-> *"A story is done when it is merged to main through a reviewed PR with at least one approval, works on the device of both team members (Fateh Hasanlı and Ibrokhimov Odiljon), does not crash on invalid input or screen rotation, and its linked GitHub issue is closed."*
+> *"A feature or user story is considered Done when it is merged into main through a reviewed Pull Request with at least one approval, runs without crashing on the devices of both team members (Fateh Hasanlı and Ibrokhimov Odiljon), handles invalid input gracefully with user-friendly error messages, and has its corresponding GitHub issue closed."*
 
 ---
 
-## Cloud Data Model (R2 & R3)
+## 4. Cloud Firestore Data Model Specification
 
-**Main Collection:** `references`  
-**Reference Collection (Read-Only):** `projects` (Holds 3+ pre-seeded records)
+The cloud backend uses two collections: `references` (the main collection that users create, edit, and delete) and `projects` (a read-only reference collection that holds pre-seeded game project titles):
 
-| Collection | Field Name | Type | Set By | Description |
+| Collection | Field Name | Type | Set By | Description & Rules |
 | :--- | :--- | :--- | :--- | :--- |
-| `users` | `uid` | String (doc id) | Firebase Auth | User account identifier |
-| `users` | `email` | String | User / Auth | e.g. `fatehqasanov@gmail.com` |
-| `projects` | `id` | String (doc id) | Admin / Seed | e.g. `proj_1` (Reference collection) |
-| `projects` | `title` | String | Admin / Seed | e.g. `Cyberpunk Alley Level` |
-| `references` | `id` | String (doc id) | Firestore | Unique reference ID |
-| `references` | `ownerId` | String | App (Auth session) | Foreign key to `users.uid` |
-| `references` | `projectId` | String | User Input | Foreign key to `projects.id` |
-| `references` | `note` | String | User Input | Material reference description |
-| `references` | `colorHex` | String | User Input | Surface color hex code (`#RRGGBB`) |
+| `users` | `uid` | String (doc id) | Firebase Auth | Matches authenticated user UID |
+| `users` | `email` | String | User / Auth | User account email address |
+| `projects` | `id` | String (doc id) | Admin / Seed | Pre-seeded reference collection ID |
+| `projects` | `title` | String | Admin / Seed | e.g. `"Cyberpunk Alley Level"` |
+| `references` | `id` | String (doc id) | Firestore | Unique reference document ID |
+| `references` | `ownerId` | String | App (Auth Session) | Foreign key matching `users.uid` |
+| `references` | `projectId` | String | User Input | Foreign key matching `projects.id` |
+| `references` | `note` | String | User Input | Texture description (1 to 200 chars) |
+| `references` | `colorHex` | String | User Input | Surface color hex format (`#RRGGBB`) |
 | `references` | `rating` | Int | User Input | Importance rating (1 to 5 stars) |
 | `references` | `status` | String | User Input | `"active"` or `"archived"` |
 | `references` | `createdAt` | Timestamp | Server Clock | `FieldValue.serverTimestamp()` |
@@ -66,15 +67,24 @@
 
 ---
 
-## R8 — Server-Side Access Control Scenarios Matrix
+## 5. 3-Layer Architecture & Data Isolation
 
-Rules code defined in [`firestore.rules`](file:///C:/Users/fateh/AndroidStudioProjects/RefScan/firestore.rules):
+The application strictly enforces a 3-layer architecture to ensure clean separation of concerns:
+1. **Data Layer:** `ReferenceRepository` interface and `FirebaseReferenceRepository` handle all direct communication with Cloud Firestore using coroutine extensions (`await()`) and realtime snapshot flows (`callbackFlow`).
+2. **Logic Layer:** `ReferenceValidator` contains pure Kotlin validation functions (zero UI or Android framework dependencies). `ReferenceListViewModel` and `ReferenceEditViewModel` manage UI state via `StateFlow`.
+3. **UI Layer:** Jetpack Compose screens (`ReferenceListScreen` and `ReferenceEditScreen`) only display state and forward user interactions to the ViewModel.
 
-| # | Scenario Description | Expected | Verification Method | Result |
+---
+
+## 6. Server-Side Access Control & Security Scenarios (R8)
+
+Security rules are defined as code in [`firestore.rules`](file:///C:/Users/fateh/AndroidStudioProjects/RefScan/firestore.rules) and committed to the repository:
+
+| # | Scenario Description | Expected Behavior | Verification Method | Result |
 | :-: | :--- | :-: | :--- | :-: |
 | **1** | Read own record | Allowed | App snapshot query / Rules Playground | ✅ **ALLOWED** |
 | **2** | Read same record as a different user | Denied | Rules Playground simulated as User B | ✅ **DENIED** |
-| **3** | Read without being signed in | Denied | Unauthenticated API request call | ✅ **DENIED** |
+| **3** | Read without being signed in | Denied | Unauthenticated request call | ✅ **DENIED** |
 | **4** | Create record whose `ownerId` is another user | Denied | Rules Playground create request with fake UID | ✅ **DENIED** |
 | **5** | Create record breaking logical rule (empty note) | Denied | Rules Playground validation check | ✅ **DENIED** |
 | **6** | Update own record, changing its `ownerId` | Denied | Rules Playground update request | ✅ **DENIED** |
@@ -83,20 +93,11 @@ Rules code defined in [`firestore.rules`](file:///C:/Users/fateh/AndroidStudioPr
 
 ---
 
-## R9 — Implemented Extensions (4 Completed)
+## 7. Phase 6 — Micro-Retrospective ("Retro – Lab 2")
 
-1. **E1: Search** — Text field filters the list by `note` and `projectName` (case-insensitive) with a clear button.
-2. **E3: Empty & No-Results States** — Distinct hint shown when list is empty vs. when a search query yields no hits.
-3. **E5: Status Toggle & Filtering** — Toggle chips filter list between "All", "Active", and "Archived" with status tags.
-4. **E7: Statistics Header** — Header card displays live computed metrics (`"2 active · 1 archived"`).
-
----
-
-## Phase 6 — Micro-Retrospective ("Retro – Lab 2")
-
-- **What Went Well:** Smooth collaboration between Fateh Hasanlı and Ibrokhimov Odiljon with commits authored by both members.
-- **What Did Not Go Well:** Initial Security Rules denied update operations due to timestamp comparison syntax; resolved by enforcing `request.time` equality.
-- **Action Items for Lab 3:** Implement unit tests for `ReferenceValidator` using JUnit 4 and set up Firebase Local Emulator Suite.
+- **What Went Well:** Excellent teamwork and task distribution between Fateh Hasanlı and Ibrokhimov Odiljon with commits authored by both team members in the repository.
+- **What Did Not Go Well:** Initial Security Rules blocked update requests due to strict timestamp comparisons; resolved by comparing `request.time`.
+- **Action Items for Lab 3:** Implement unit test suites for `ReferenceValidator` and `AuthValidator` using JUnit 4, and configure Firebase Local Emulator Suite.
 
 ---
 *Report generated for Lab 2 submission • RefScan Android App • Authors: Fateh Hasanlı (57322) & Ibrokhimov Odiljon (52857)*
