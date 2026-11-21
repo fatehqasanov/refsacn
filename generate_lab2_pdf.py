@@ -224,7 +224,7 @@ add_p('<b>Screen Features &amp; Workflow:</b><br/>'
       '• <b>Action Button:</b> Displays a <code>CircularProgressIndicator</code> during authentication calls and disables user interactions while loading.<br/>'
       '• <b>Navigation Link:</b> Redirects the user to the Registration screen.', body_style)
 story.append(Spacer(1, 4))
-story.append(RLImage(img_login, width=240, height=506))
+story.append(RLImage(img_login, width=240, height=496))
 story.append(Spacer(1, 14))
 
 story.append(PageBreak())
@@ -236,7 +236,7 @@ add_p('<b>Screen Features &amp; Workflow:</b><br/>'
       '• <b>Field Validation:</b> Uses pure Kotlin rules in <code>AuthValidator</code> to verify email formatting, password length (minimum 6 characters), and password confirmation match before initiating backend calls.<br/>'
       '• <b>Error Displays:</b> Field-specific error labels are rendered directly below each corresponding input field.', body_style)
 story.append(Spacer(1, 4))
-story.append(RLImage(img_reg, width=240, height=506))
+story.append(RLImage(img_reg, width=240, height=496))
 story.append(Spacer(1, 14))
 
 story.append(PageBreak())
@@ -245,12 +245,13 @@ story.append(PageBreak())
 add_p('Figure 3: Main Dashboard — Live Material Reference List (R5, E1, E3, E5, E7)', h3_style)
 add_p('<b>Screen Features &amp; Workflow:</b><br/>'
       '• <b>Live Query (R5):</b> Employs Cloud Firestore realtime snapshot listener (<code>addSnapshotListener</code>) filtered strictly at the query level by <code>ownerId == currentUid</code>.<br/>'
+      '• <b>Real-Life Texture Photo Thumbnails:</b> Each card displays the captured real-world texture photo (wet asphalt, mossy stone brick, aged oak wood).<br/>'
       '• <b>E1 Search Extension:</b> Interactive search text field filters the list in real-time by note text and project title.<br/>'
       '• <b>E7 Statistics Header:</b> Displays live computed metrics (e.g. <code>"2 active · 1 archived"</code>).<br/>'
       '• <b>E5 Status Filter Chips:</b> Toggles view between All, Active, and Archived references.<br/>'
       '• <b>Floating Action Button (FAB):</b> Tapping "+" navigates to the Create Reference form screen.', body_style)
 story.append(Spacer(1, 4))
-story.append(RLImage(img_list, width=240, height=506))
+story.append(RLImage(img_list, width=240, height=496))
 story.append(Spacer(1, 14))
 
 story.append(PageBreak())
@@ -259,11 +260,12 @@ story.append(PageBreak())
 add_p('Figure 4: Data Management — Create &amp; Edit Form Screen (R6, R7)', h3_style)
 add_p('<b>Screen Features &amp; Workflow:</b><br/>'
       '• <b>Unified Form Route (R6):</b> Handled via route <code>edit?id={id}</code>. If `id` is null, it creates a new record; if `id` is present, it loads and updates the existing reference.<br/>'
+      '• <b>Captured Reference Photo Preview:</b> Displays the real-life texture photo preview for the active game project reference.<br/>'
       '• <b>Reference Collection Selector:</b> Picked from a dropdown menu loaded from the <code>projects</code> reference collection.<br/>'
       '• <b>Validation Rules:</b> Enforces note length, valid `#RRGGBB` color hex format, 1-5 star ratings, and cross-field logic.<br/>'
       '• <b>Delete Confirmation (R7):</b> Prompts an alert dialog confirming deletion by item title.', body_style)
 story.append(Spacer(1, 4))
-story.append(RLImage(img_edit, width=240, height=506))
+story.append(RLImage(img_edit, width=240, height=496))
 story.append(Spacer(1, 14))
 
 story.append(PageBreak())
