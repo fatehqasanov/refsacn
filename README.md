@@ -1,4 +1,4 @@
-# RefScan
+# RefScan — Lab 2
 
 A mobile reference capture and management application designed for game artists and level designers away from their desktop workstations.
 
@@ -9,54 +9,55 @@ A mobile reference capture and management application designed for game artists 
 
 ---
 
-## Team & Roles
-This project is developed as a solo-developer project for **Mobile Application in the Cloud — Lab 1**:
+## Team & Roles (60 / 40 Workload Distribution)
 
-- **Developer:** Fateh Hasanlı (Student ID: 57322)
-- **Account Email:** fatehqasanov@gmail.com
-- **Roles:** Product Owner (PO), Tech Lead, Developer, QA / DevOps
+- **Fateh Hasanlı** (Student ID: 57322 | Email: `fatehqasanov@gmail.com`) — **60% Workload** (Product Owner & Tech Lead: Architecture, Data Layer, Auth & Form Logic)
+- **Ibrokhimov Odiljon** (Student ID: 52857 | Email: `52857@student.polsl.pl`) — **40% Workload** (QA / DevOps & Developer: Live List UI, Security Rules, Extensions & Board)
 
 ---
 
-## MVP Features
+## Tech Stack Table
 
-- **User Authentication (Sprint 1 - Complete):** Register, Log In, Log Out, and Auto-Login session persistence using Firebase Authentication.
-- **Project List Screen (Sprint 1):** View and manage active game environment levels or project titles.
-- **Reference Detail & Edit Screen (Sprint 1):** View, add, and update real-world notes, surface material tags, and color hex codes linked to a project.
-- **Camera & Cloud Storage Upload (Sprint 3 / Later):** Capture direct texture photo references using the phone camera and sync to Firebase Cloud Storage.
-
----
-
-## Cloud Data Model (Cloud Firestore)
-
-```
-[users] (Collection)
- └── uid (Doc ID - String matching Firebase Auth UID)
-      ├── email: String (e.g. fatehqasanov@gmail.com)
-      ├── displayName: String
-      └── createdAt: Timestamp
-
-[projects] (Collection)
- └── projectId (Doc ID - String)
-      ├── ownerId: String (foreign key -> users.uid)
-      ├── title: String (e.g. "Cyberpunk Alley Level")
-      ├── engine: String (e.g. "Unreal Engine 5")
-      └── createdAt: Timestamp
-
-[references] (Collection)
- └── referenceId (Doc ID - String)
-      ├── projectId: String (foreign key -> projects.projectId)
-      ├── ownerId: String (foreign key -> users.uid)
-      ├── note: String (e.g. "Wet asphalt roughness & puddle reflection")
-      ├── colorHex: String (e.g. "#1A2B3C")
-      └── createdAt: Timestamp
-```
+| Component | Technology / Library |
+| :--- | :--- |
+| **App Framework** | Kotlin + Jetpack Compose |
+| **Backend & Auth** | Firebase Authentication |
+| **Cloud Database** | Cloud Firestore (EU Region - `europe-west1`) |
+| **Security** | Firestore Security Rules (`firestore.rules`) |
+| **Testing** | JUnit 4, Kotlin Coroutines Test Framework |
 
 ---
 
-## Architecture Diagram
+## Definition of Done (DoD)
 
-GitHub renders Mermaid diagrams directly in Markdown:
+> *"A story is done when it is merged to main through a reviewed PR with at least one approval, works on the device of both team members (Fateh Hasanlı and Ibrokhimov Odiljon), does not crash on invalid input or screen rotation, and its linked GitHub issue is closed."*
+
+---
+
+## Cloud Data Model (R2 & R3)
+
+**Main Collection:** `references`  
+**Reference Collection (Read-Only):** `projects`
+
+| Collection | Field Name | Type | Set By | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `users` | `uid` | String (doc id) | Firebase Auth | User account identifier |
+| `users` | `email` | String | User / Auth | e.g. `fatehqasanov@gmail.com` |
+| `projects` | `id` | String (doc id) | Admin / Seed | e.g. `proj_1` (Reference collection) |
+| `projects` | `title` | String | Admin / Seed | e.g. `Cyberpunk Alley Level` |
+| `references` | `id` | String (doc id) | Firestore | Unique reference ID |
+| `references` | `ownerId` | String | App (Auth session) | Foreign key to `users.uid` |
+| `references` | `projectId` | String | User Input | Foreign key to `projects.id` |
+| `references` | `note` | String | User Input | Material reference description |
+| `references` | `colorHex` | String | User Input | Surface color hex code (`#RRGGBB`) |
+| `references` | `rating` | Int | User Input | Importance rating (1 to 5 stars) |
+| `references` | `status` | String | User Input | `"active"` or `"archived"` |
+| `references` | `createdAt` | Timestamp | Server Clock | `FieldValue.serverTimestamp()` |
+| `references` | `updatedAt` | Timestamp | Server Clock | `FieldValue.serverTimestamp()` |
+
+---
+
+## Architecture Diagram (Mermaid)
 
 ```mermaid
 flowchart LR
@@ -65,26 +66,35 @@ flowchart LR
     D[Cloud Functions<br/>Lab 3] --> C
 ```
 
-### Layered Code Structure (3-Layer Architecture)
-- **Data Layer:** `AuthRepository` (interface) and `FirebaseAuthRepository` (implementation using `Firebase.auth`, `await()`, `callbackFlow`).
-- **Logic Layer:** `AuthValidator` (pure Kotlin input rules) and `AuthViewModel` (UI state handling via `StateFlow` and error mapping).
-- **UI Layer:** `LoginScreen`, `RegisterScreen`, `HomeScreen`, and `AppNavHost` (Jetpack Compose with reactive Navigation).
+---
+
+## Implemented Extensions (R9 - 4 Completed)
+
+- **E1: Search** — Text field filters the list by `note` and `projectName` (case-insensitive) with clear button.
+- **E3: Empty & No-Results States** — Distinct hint for empty list vs. no search hits.
+- **E5: Status Toggle & Filtering** — Toggle chips filter list between "All", "Active", and "Archived".
+- **E7: Statistics Header** — Header card displays live computed metrics (`"2 active · 1 archived"`).
 
 ---
 
-## How to Run
+## Server-Side Access Control (R8)
 
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/fatehqasanov/refsacn.git
-   ```
-2. Open the project in **Android Studio** (Ladybug / 2024+).
-3. Ensure `google-services.json` is located inside the `app/` directory.
-4. Let Gradle sync dependencies automatically.
-5. Select an Android Emulator (API 26+) or physical device and click **Run** (`Shift + F10`).
+Security rules defined in [`firestore.rules`](firestore.rules) and tested against 8 key scenarios:
+
+| # | Scenario Description | Expected | Result |
+| :-: | :--- | :-: | :-: |
+| **1** | Read own record | Allowed | ✅ **ALLOWED** |
+| **2** | Read same record as a different user | Denied | ✅ **DENIED** |
+| **3** | Read without being signed in | Denied | ✅ **DENIED** |
+| **4** | Create record whose `ownerId` is another user | Denied | ✅ **DENIED** |
+| **5** | Create record breaking logical rule | Denied | ✅ **DENIED** |
+| **6** | Update own record, changing its `ownerId` | Denied | ✅ **DENIED** |
+| **7** | Create record in reference collection (`projects`) | Denied | ✅ **DENIED** |
+| **8** | Read reference record as signed-in user | Allowed | ✅ **ALLOWED** |
 
 ---
 
-## Lab 1 Deliverables
-- Final Report Document: [`Lab1_Final_Report.md`](Lab1_Final_Report.md)
-- Printable PDF Report: [`Lab1_Final_Report.pdf`](Lab1_Final_Report.pdf)
+## Lab 2 Reports & Tag
+- Final Report Document: [`Lab2_Final_Report.md`](Lab2_Final_Report.md)
+- Printable PDF Report: [`Lab2_Final_Report.pdf`](Lab2_Final_Report.pdf)
+- Release Tag: `lab2`
