@@ -11,7 +11,7 @@
 
 This project was developed collaboratively by a team of two students:
 
-- **Fateh Hasanlı** (Student ID: 57322 | Email: `fatehqasanov@gmail.com`) — **Product Owner & Tech Lead**
+-- **Fateh Hasanli** (Student ID: 57322 | Email: `fatehqasanov@gmail.com`) — **Product Owner & Tech Lead**
   - Architecture & Data Layer setup (`ReferenceRepository`, `FirebaseReferenceRepository`).
   - Firebase Authentication & Form ViewModels (`AuthViewModel`, `ReferenceEditViewModel`).
   - Domain models (`Reference`, `Project`) & pure Kotlin validation rules (`ReferenceValidator`).

@@ -99,7 +99,7 @@ add_p('This project was developed collaboratively by a team of two students. Res
 roles_data = [
     [Paragraph('<b>Team Member</b>', body_style), Paragraph('<b>Role &amp; Primary Responsibilities</b>', body_style), Paragraph('<b>Key Deliverables Completed</b>', body_style)],
     [
-        Paragraph('<b>Fateh Hasanlı</b><br/>ID: 57322<br/><code>fatehqasanov@gmail.com</code>', body_style),
+        Paragraph('<b>Fateh Hasanli</b><br/>ID: 57322<br/><code>fatehqasanov@gmail.com</code>', body_style),
         Paragraph('<b>Product Owner &amp; Tech Lead</b><br/>• Core Architecture &amp; Data Layer<br/>• Firebase Auth &amp; Form Logic<br/>• Domain Models &amp; Validation', body_style),
         Paragraph('• <code>AuthRepository</code> &amp; ViewModel<br/>• <code>ReferenceRepository</code> &amp; Firebase Impl<br/>• <code>ReferenceValidator</code> rules<br/>• <code>ReferenceEditViewModel</code> &amp; Form', body_style)
     ],
@@ -135,7 +135,7 @@ add_p('<b>Technical Configuration:</b><br/>'
       '• <b>Testing Utilities:</b> JUnit 4 and Kotlin Coroutines Test framework', body_style)
 
 add_p('<b>Definition of Done (DoD):</b><br/>'
-      '<i>"A feature or user story is considered Done when it is merged into main through a reviewed Pull Request with at least one approval, runs without crashing on the devices of both team members (Fateh Hasanlı and Ibrokhimov Odiljon), handles invalid input gracefully with user-friendly error messages, and has its corresponding GitHub issue closed."</i>', quote_style)
+      '<i>"A feature or user story is considered Done when it is merged into main through a reviewed Pull Request with at least one approval, runs without crashing on the devices of both team members (Fateh Hasanli and Ibrokhimov Odiljon), handles invalid input gracefully with user-friendly error messages, and has its corresponding GitHub issue closed."</i>', quote_style)
 
 story.append(PageBreak())
 
@@ -207,7 +207,7 @@ story.append(Preformatted(code_data, code_style))
 
 story.append(PageBreak())
 
-# Section 6: In-App Screenshots - LARGE & EXPLANATORY ONE BY ONE
+# Section 6: In-App Screenshots
 add_p('6. In-App Screen Flow &amp; User Experience', h2_style)
 add_p('Each screen is displayed below in full scale alongside a detailed breakdown of its features and user interaction flow:', body_style)
 
@@ -321,15 +321,10 @@ story.append(Preformatted(rules_code, code_style))
 
 # Section 8: Micro-Retrospective
 add_p('8. Phase 6 — Micro-Retrospective ("Retro – Lab 2")', h2_style)
-add_p('<b>What Went Well:</b><br/>'
-      '• Excellent teamwork and task distribution between Fateh Hasanlı and Ibrokhimov Odiljon with commits authored by both team members in the repository.<br/>'
+add_p('• <b>What Went Well:</b> Excellent teamwork and task distribution between Fateh Hasanli and Ibrokhimov Odiljon with commits authored by both team members in the repository.<br/>'
       '• The 3-layer architecture decoupled pure Kotlin validation (`ReferenceValidator`) and filtering logic (`ReferenceListUiState`) for seamless unit testing in Lab 3.<br/>'
       '• Firestore snapshot listeners delivered instant real-time synchronization upon document edits.<br/><br/>'
-      '<b>What Did Not Go Well:</b><br/>'
-      '• Initial Security Rules blocked update requests due to strict timestamp comparisons; resolved by comparing `request.time`.<br/><br/>'
-      '<b>Action Items for Lab 3:</b><br/>'
-      '1. Implement unit test suites for `ReferenceValidator` and `AuthValidator` using JUnit 4.<br/>'
-      '2. Configure Firebase Local Emulator Suite for reproducible offline backend testing.', body_style)
+      '• <b>What Did Not Go Well:</b> Initial Security Rules blocked update requests due to strict timestamp comparisons; resolved by comparing `request.time`.', body_style)
 
 doc.build(story)
-print('Expanded Lab 2 PDF generated successfully at:', pdf_path)
+print('CLEAN PERFECT Lab 2 PDF generated successfully at:', pdf_path)

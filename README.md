@@ -11,7 +11,7 @@ A mobile reference capture and management application designed for game artists 
 
 ## Team & Roles (60 / 40 Workload Distribution)
 
-- **Fateh Hasanlı** (Student ID: 57322 | Email: `fatehqasanov@gmail.com`) — **60% Workload** (Product Owner & Tech Lead: Architecture, Data Layer, Auth & Form Logic)
+- **Fateh Hasanli** (Student ID: 57322 | Email: `fatehqasanov@gmail.com`) — **Product Owner & Tech Lead: Architecture, Data Layer, Auth & Form Logic**
 - **Ibrokhimov Odiljon** (Student ID: 52857 | Email: `52857@student.polsl.pl`) — **40% Workload** (QA / DevOps & Developer: Live List UI, Security Rules, Extensions & Board)
 
 ---
