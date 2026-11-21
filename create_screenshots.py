@@ -1,5 +1,5 @@
 import os
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
+from PIL import Image, ImageDraw, ImageFont
 
 # Realistic Phone Outer Dimensions: 600 x 1240 (Inner Display: 520 x 1120)
 OUTER_W, OUTER_H = 600, 1240
@@ -32,37 +32,16 @@ font_label = get_font(13)
 font_input = get_font(14)
 font_btn = get_font(14)
 
-def draw_phone_frame(canvas):
-    draw = ImageDraw.Draw(canvas)
-    # Phone Body Outer Shell
-    draw.rounded_rectangle([10, 10, OUTER_W-10, OUTER_H-10], radius=44, fill=FRAME_COLOR, outline=FRAME_BORDER, width=3)
-    # Screen Cutout Mask (Inner Display)
-    screen_mask = Image.new("L", (INNER_W, INNER_H), 0)
-    sdraw = ImageDraw.Draw(screen_mask)
-    sdraw.rounded_rectangle([0, 0, INNER_W, INNER_H], radius=28, fill=255)
-    return screen_mask
-
-def apply_phone_shell(screen_img):
-    canvas = Image.new("RGB", (OUTER_W, OUTER_H), (240, 242, 245)) # Soft background studio drop
-    draw = ImageDraw.Draw(canvas)
-
-    # Draw Phone Body Frame
-    draw.rounded_rectangle([10, 10, OUTER_W-10, OUTER_H-10], radius=44, fill=FRAME_COLOR, outline=FRAME_BORDER, width=3)
-
-    # Paste Inner Display Screen using rounded mask
-    mask = Image.new("L", (INNER_W, INNER_H), 0)
-    ImageDraw.Draw(mask).rounded_rectangle([0, 0, INNER_W, INNER_H], radius=26, fill=255)
-    canvas.paste(screen_img, (MARGIN_X, MARGIN_Y), mask)
-
-    # Draw Camera Punch Hole & Top Earpiece
-    draw.ellipse([OUTER_W//2 - 12, MARGIN_Y + 10, OUTER_W//2 + 12, MARGIN_Y + 34], fill=(10, 10, 12))
-    draw.ellipse([OUTER_W//2 - 5, MARGIN_Y + 17, OUTER_W//2 + 5, MARGIN_Y + 27], fill=(25, 30, 45)) # Lens glass
-
-    return canvas
+# Load real royalty-free texture photos downloaded from Unsplash
+try:
+    img_asphalt = Image.open("asphalt.jpg")
+    img_moss = Image.open("moss.jpg")
+    img_wood = Image.open("wood.jpg")
+except Exception as e:
+    print("Error opening texture images:", e)
 
 def draw_status_bar(draw):
     draw.text((24, 14), "09:41", fill=DARK_TEXT, font=get_font(13))
-    # 5G & Battery
     draw.text((INNER_W-110, 14), "5G", fill=DARK_TEXT, font=get_font(12))
     draw.rectangle([INNER_W-60, 16, INNER_W-36, 28], outline=DARK_TEXT, width=2)
     draw.rectangle([INNER_W-58, 18, INNER_W-42, 26], fill=DARK_TEXT)
@@ -70,36 +49,34 @@ def draw_status_bar(draw):
 def draw_nav_bar(draw):
     draw.rectangle([INNER_W//2 - 60, INNER_H - 14, INNER_W//2 + 60, INNER_H - 9], fill=DARK_TEXT)
 
-# Procedural realistic material textures
-def draw_asphalt_texture(img, box):
-    x0, y0, x1, y1 = box
-    tex = Image.new("RGB", (x1-x0, y1-y0), (35, 38, 45))
-    tdraw = ImageDraw.Draw(tex)
-    for i in range(0, x1-x0, 4):
-        for j in range(0, y1-y0, 4):
-            val = (i*7 + j*13) % 40
-            tdraw.rectangle([i, j, i+3, j+3], fill=(30+val, 33+val, 40+val))
-    tdraw.ellipse([10, 10, (x1-x0)-10, (y1-y0)-10], outline=(80, 110, 140), width=3)
-    img.paste(tex, (x0, y0))
+def apply_phone_shell(screen_img):
+    canvas = Image.new("RGB", (OUTER_W, OUTER_H), (240, 242, 245))
+    draw = ImageDraw.Draw(canvas)
 
-def draw_moss_texture(img, box):
-    x0, y0, x1, y1 = box
-    tex = Image.new("RGB", (x1-x0, y1-y0), (50, 75, 45))
-    tdraw = ImageDraw.Draw(tex)
-    for y in range(0, y1-y0, 15):
-        tdraw.line([0, y, x1-x0, y], fill=(30, 45, 25), width=2)
-    for x in range(0, x1-x0, 25):
-        tdraw.line([x, 0, x, y1-y0], fill=(30, 45, 25), width=2)
-    tdraw.ellipse([5, 5, 35, 35], fill=(70, 130, 50))
-    img.paste(tex, (x0, y0))
+    # Phone Body Outer Shell
+    draw.rounded_rectangle([10, 10, OUTER_W-10, OUTER_H-10], radius=44, fill=FRAME_COLOR, outline=FRAME_BORDER, width=3)
 
-def draw_wood_texture(img, box):
+    # Inner Display Cutout Mask
+    mask = Image.new("L", (INNER_W, INNER_H), 0)
+    ImageDraw.Draw(mask).rounded_rectangle([0, 0, INNER_W, INNER_H], radius=26, fill=255)
+    canvas.paste(screen_img, (MARGIN_X, MARGIN_Y), mask)
+
+    # Camera Punch Hole & Earpiece
+    draw.ellipse([OUTER_W//2 - 12, MARGIN_Y + 10, OUTER_W//2 + 12, MARGIN_Y + 34], fill=(10, 10, 12))
+    draw.ellipse([OUTER_W//2 - 5, MARGIN_Y + 17, OUTER_W//2 + 5, MARGIN_Y + 27], fill=(25, 30, 45))
+
+    return canvas
+
+def paste_texture_thumbnail(canvas_img, texture_img, box):
     x0, y0, x1, y1 = box
-    tex = Image.new("RGB", (x1-x0, y1-y0), (140, 85, 40))
-    tdraw = ImageDraw.Draw(tex)
-    for i in range(0, x1-x0, 6):
-        tdraw.line([i, 0, i+10, y1-y0], fill=(110, 60, 25), width=2)
-    img.paste(tex, (x0, y0))
+    w, h = x1 - x0, y1 - y0
+    resized = texture_img.resize((w, h), Image.Resampling.LANCZOS)
+
+    # Create rounded corner mask for thumbnail
+    mask = Image.new("L", (w, h), 0)
+    ImageDraw.Draw(mask).rounded_rectangle([0, 0, w, h], radius=8, fill=255)
+
+    canvas_img.paste(resized, (x0, y0), mask)
 
 def create_login_screen():
     screen = Image.new("RGB", (INNER_W, INNER_H), BG_COLOR)
@@ -197,10 +174,10 @@ def create_reference_list_screen():
     draw.rounded_rectangle([205, y, 310, y+30], radius=15, outline=OUTLINE_COLOR)
     draw.text((257, y+15), "Archived (1)", fill=DARK_TEXT, font=get_font(11), anchor="mm")
 
-    # Item 1 with Texture Thumbnail Photo
+    # Item 1 with REAL Royalty-Free Asphalt Texture Photo!
     y = 318
     draw.rounded_rectangle([20, y, INNER_W-20, y+110], radius=12, fill=WHITE, outline=OUTLINE_COLOR, width=1)
-    draw_asphalt_texture(screen, (32, y+15, 96, y+79))
+    paste_texture_thumbnail(screen, img_asphalt, (32, y+15, 96, y+79))
     draw.ellipse([78, y+60, 98, y+80], fill=(26, 43, 60), outline=WHITE, width=2)
     draw.text((108, y+14), "Cyberpunk Alley Level", fill=DARK_TEXT, font=font_label)
     draw.text((108, y+35), "Wet asphalt roughness & puddle reflection", fill=MUTED_TEXT, font=get_font(11))
@@ -210,10 +187,10 @@ def create_reference_list_screen():
     draw.text((208, y+85), "ACTIVE", fill=GREEN_TEXT, font=get_font(9), anchor="mm")
     draw.text((INNER_W-38, y+42), "🗑", fill=(186, 26, 26), font=font_h2)
 
-    # Item 2 with Texture Thumbnail Photo
+    # Item 2 with REAL Royalty-Free Mossy Stone Texture Photo!
     y = 442
     draw.rounded_rectangle([20, y, INNER_W-20, y+110], radius=12, fill=WHITE, outline=OUTLINE_COLOR, width=1)
-    draw_moss_texture(screen, (32, y+15, 96, y+79))
+    paste_texture_thumbnail(screen, img_moss, (32, y+15, 96, y+79))
     draw.ellipse([78, y+60, 98, y+80], fill=(42, 123, 60), outline=WHITE, width=2)
     draw.text((108, y+14), "Overgrown Ruin Environment", fill=DARK_TEXT, font=font_label)
     draw.text((108, y+35), "Mossy stone brick normal map notes", fill=MUTED_TEXT, font=get_font(11))
@@ -223,10 +200,10 @@ def create_reference_list_screen():
     draw.text((215, y+85), "ARCHIVED", fill=MUTED_TEXT, font=get_font(9), anchor="mm")
     draw.text((INNER_W-38, y+42), "🗑", fill=(186, 26, 26), font=font_h2)
 
-    # Item 3 with Texture Thumbnail Photo
+    # Item 3 with REAL Royalty-Free Wood Grain Texture Photo!
     y = 566
     draw.rounded_rectangle([20, y, INNER_W-20, y+110], radius=12, fill=WHITE, outline=OUTLINE_COLOR, width=1)
-    draw_wood_texture(screen, (32, y+15, 96, y+79))
+    paste_texture_thumbnail(screen, img_wood, (32, y+15, 96, y+79))
     draw.ellipse([78, y+60, 98, y+80], fill=(180, 100, 40), outline=WHITE, width=2)
     draw.text((108, y+14), "Medieval Castle Interior", fill=DARK_TEXT, font=font_label)
     draw.text((108, y+35), "Aged oak wood grain & iron hinge specular", fill=MUTED_TEXT, font=get_font(11))
@@ -264,7 +241,7 @@ def create_reference_edit_screen():
     y += 58
     draw.text((20, y), "Real-Life Captured Texture Photo", fill=DARK_TEXT, font=font_label)
     y += 20
-    draw_asphalt_texture(screen, (20, y, 150, y+85))
+    paste_texture_thumbnail(screen, img_asphalt, (20, y, 150, y+85))
     draw.rounded_rectangle([20, y, 150, y+85], radius=8, outline=PURPLE, width=2)
     draw.rounded_rectangle([165, y+18, INNER_W-20, y+65], radius=18, fill=PURPLE_CONTAINER)
     draw.text((INNER_W//2 + 75, y+41), "📷  Captured: wet_asphalt_ref.jpg", fill=PURPLE, font=font_label, anchor="mm")
@@ -313,4 +290,4 @@ create_login_screen()
 create_register_screen()
 create_reference_list_screen()
 create_reference_edit_screen()
-print("REALISTIC PHONE FRAME SCREENSHOTS GENERATED SUCCESSFULLY!")
+print("REAL-WORLD UN SPLASH TEXTURE PHOTO SCREENSHOTS GENERATED SUCCESSFULLY!")
